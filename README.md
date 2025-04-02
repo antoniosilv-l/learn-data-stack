@@ -1,1 +1,1 @@
-# learn-data-stack
+# Estudo sobre o 'Modern Data Stack'
