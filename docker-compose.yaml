@@ -1,5 +1,6 @@
-x-airflow-common:
-  &airflow-common
+x-environment-common:
+  &environment-common
+  image: local-data-stack:latest
   build: .
   environment:
     &airflow-common-env
@@ -10,13 +11,15 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
+    AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
     _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-  user: "${AIRFLOW_UID:-50000}:0"
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/config:/opt/airflow/config
+    - ./airflow/plugins:/opt/airflow/plugins
+    - ./dbt:/opt/dbt
+  user: "airflow:airflow"
   depends_on:
     &airflow-common-depends-on
     postgres:
@@ -44,10 +47,12 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     restart: always
+    ports:
+      - 80:80
 
   airflow-webserver:
-    <<: *airflow-common
-    command: webserver
+    <<: *environment-common
+    command: ["airflow", "webserver"]
     ports:
       - "8080:8080"
     healthcheck:
@@ -63,8 +68,8 @@ services:
         condition: service_completed_successfully
 
   airflow-scheduler:
-    <<: *airflow-common
-    command: scheduler
+    <<: *environment-common
+    command: ["airflow", "scheduler"]
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
       interval: 30s
@@ -78,8 +83,8 @@ services:
         condition: service_completed_successfully
 
   airflow-triggerer:
-    <<: *airflow-common
-    command: triggerer
+    <<: *environment-common
+    command: ["airflow", "triggerer"]
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 30s
@@ -93,7 +98,7 @@ services:
         condition: service_completed_successfully
 
   airflow-init:
-    <<: *airflow-common
+    <<: *environment-common
     entrypoint: /bin/bash
     command:
       - -c
@@ -140,19 +145,23 @@ services:
           echo "   https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#before-you-begin"
           echo
         fi
-        mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
-        exec /entrypoint airflow version
+        airflow db upgrade
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+        exec airflow version
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: 'true'
-      _AIRFLOW_WWW_USER_CREATE: 'true'
-      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
-      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
-      _PIP_ADDITIONAL_REQUIREMENTS: ''
-    user: "0:0"
     volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}:/sources
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+      - ./airflow/config:/opt/airflow/config
+      - ./airflow/plugins:/opt/airflow/plugins
 
 volumes:
   postgres-db-volume:

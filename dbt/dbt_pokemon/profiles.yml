@@ -1,0 +1,12 @@
+dbt_pokemon:
+  outputs:
+    dev:
+      type: postgres
+      dbname: dw
+      schema: pokemon
+      host: localhost
+      user: airflow
+      pass: airflow
+      port: 5432
+      threads: 1
+  target: dev

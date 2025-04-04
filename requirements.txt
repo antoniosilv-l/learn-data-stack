@@ -1,3 +1,6 @@
 pre-commit==4.2.0
 dbt-core==1.9.0
 dbt-postgres==1.9.0
+astronomer-cosmos
+apache-airflow==2.10.5
+apache-airflow-providers-postgres==5.6.0

@@ -1,0 +1,12 @@
+dbt_yugioh:
+  outputs:
+    dev:
+      type: postgres
+      dbname: dw
+      schema: yugioh
+      host: localhost
+      user: airflow
+      pass: airflow
+      port: 5432
+      threads: 1
+  target: dev
