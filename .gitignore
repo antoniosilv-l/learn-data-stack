@@ -8,3 +8,6 @@ logs/
 airflow/airflow.cfg
 airflow/webserver_config.py
 airflow/airflow-webserver.pid
+
+# Secrets
+secrets.json

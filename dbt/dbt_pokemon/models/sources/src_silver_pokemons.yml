@@ -1,0 +1,94 @@
+version: 2
+
+sources:
+  - name: silver_pokemons
+    description: Esta é uma replica do banco de dados PostgreSQL, que contem informações de pokemons.
+
+    tables:
+      - name: treinadores
+        description: Contem as informacoes dos treinadores pokemon.
+        columns:
+          - name: id
+            description: Chave primaria da tabela de treinadores.
+            tests:
+              - unique
+              - not_null
+
+          - name: nome
+            description: Nome do treinador pokemon.
+
+          - name: cidade
+            description: Cidade em que o treinador pokemon nasceu.
+
+      - name: pokemons
+        description: >
+          Contem todos os pokemons, sendo uma linha por pokemon.
+        columns:
+          - name: id
+            description: Chave primaria da tabela de pokemons.
+            tests:
+              - unique
+              - not_null
+
+          - name: nome
+            description: Nome do pokemon.
+
+          - name: altura
+            description: Altura do pokemon.
+
+          - name: peso
+            description: Peso do pokemon.
+
+      - name: tipos
+        description: Contem informacoes dos tipos dos pokemons.
+        columns:
+          - name: id
+            description: Chave primaria da tabela de tipos.
+            tests:
+              - unique
+              - not_null
+
+          - name: nome
+            description: Contem a descricao do tipo do pokemon.
+
+      - name: habilidades
+        description: Contem informacoes das habilidades dos pokemons.
+        columns:
+          - name: id
+            description: Chave primaria da tabela de habilidades.
+            tests:
+              - unique
+              - not_null
+
+          - name: nome
+            description: Contem o nome da habilidade do pokemon.
+
+          - name: descricao
+            description: Contem a descricao da habilidade do pokemon.
+
+      - name: pokemon_tipos
+        description: Contem os relacionamentos dos pokemons com seus tipos.
+        columns:
+          - name: pokemon_id
+            description: Id do pokemon.
+
+          - name: tipo_id
+            description: Id do tipo do pokemon.
+
+      - name: pokemon_habilidades
+        description: Contem os relacionamentos dos pokemons com suas habilidades.
+        columns:
+          - name: pokemon_id
+            description: Id do pokemon.
+
+          - name: habilidade_id
+            description: Id da habilidade do pokemon.
+
+      - name: equipes
+        description: Contem os relacionamentos dos treinadores com seus pokemons.
+        columns:
+          - name: treinador_id
+            description: Id do treinador.
+
+          - name: pokemon_id
+            description: Id do pokemon.

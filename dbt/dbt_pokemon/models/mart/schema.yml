@@ -1,0 +1,95 @@
+models:
+  - name: dim_habilidades
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: int
+        constraints:
+          - type: not_null
+          - type: primary_key
+          - type: check
+            expression: "id > 0"
+
+      - name: customer_name
+        data_type: text
+
+      - name: first_transaction_date
+        data_type: date
+
+  - name: dim_pokemons
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: int
+        constraints:
+          - type: not_null
+          - type: primary_key
+          - type: check
+            expression: "id > 0"
+
+      - name: customer_name
+        data_type: text
+
+      - name: first_transaction_date
+        data_type: date
+
+  - name: dim_tipos
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: int
+        constraints:
+          - type: not_null
+          - type: primary_key
+          - type: check
+            expression: "id > 0"
+
+      - name: customer_name
+        data_type: text
+
+      - name: first_transaction_date
+        data_type: date
+
+  - name: dim_treinadores
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: int
+        constraints:
+          - type: not_null
+          - type: primary_key
+          - type: check
+            expression: "id > 0"
+
+      - name: customer_name
+        data_type: text
+
+      - name: first_transaction_date
+        data_type: date
+
+  - name: fct_pokemon
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: id
+        data_type: int
+        constraints:
+          - type: not_null
+          - type: primary_key
+          - type: check
+            expression: "id > 0"
+
+      - name: customer_name
+        data_type: text
+
+      - name: first_transaction_date
+        data_type: date
